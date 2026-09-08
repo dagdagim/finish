@@ -9,6 +9,7 @@ import '../../providers/task_provider.dart';
 import '../admin/admin_dashboard_screen.dart';
 import '../main_scaffold.dart';
 import 'signup_screen.dart';
+import 'google_otp_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -516,7 +517,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         text: 'Google',
                         variant: FinishButtonVariant.outline,
                         icon: const Icon(Icons.g_mobiledata_rounded, size: 24, color: AppColors.textDark),
-                        onPressed: () => _loginAsDemo('sarah@finish.et', 'customer'),
+                        onPressed: () {
+                          final typed = _emailOrPhoneController.text.trim();
+                          GoogleOtpDialog.show(
+                            context,
+                            initialEmail: typed.contains('@') ? typed : null,
+                            role: 'both',
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(width: 12),

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, getMe, switchMode, submitVerificationProfile } from '../controllers/authController';
+import { register, login, getMe, switchMode, submitVerificationProfile, sendGoogleOtp, verifyGoogleOtp } from '../controllers/authController';
 import {
   createTask,
   getTasksFeed,
@@ -41,6 +41,8 @@ router.get('/health', (req, res) => {
 // Authentication & Profile Verification
 router.post('/auth/signup', register);
 router.post('/auth/login', login);
+router.post('/auth/google/send-otp', sendGoogleOtp);
+router.post('/auth/google/verify-otp', verifyGoogleOtp);
 router.get('/users/me', authenticateJWT, getMe);
 router.patch('/users/mode', authenticateJWT, switchMode);
 router.post('/users/verification', authenticateJWT, submitVerificationProfile);

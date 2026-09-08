@@ -73,6 +73,51 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>> sendGoogleOtp(String email, {String purpose = 'Google Sign-In / Register'}) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    final res = await _api.sendGoogleOtp(email, purpose: purpose);
+    _isLoading = false;
+    if (res['success'] != true) {
+      _errorMessage = res['message'] ?? 'Failed to send verification code';
+    }
+    notifyListeners();
+    return res;
+  }
+
+  Future<Map<String, dynamic>> verifyGoogleOtp({
+    required String email,
+    required String otp,
+    String? role,
+    String? firstName,
+    String? lastName,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    final res = await _api.verifyGoogleOtp(
+      email: email,
+      otp: otp,
+      role: role,
+      firstName: firstName,
+      lastName: lastName,
+    );
+    _isLoading = false;
+
+    if (res['success'] == true) {
+      _currentUser = res['user'];
+      _errorMessage = null;
+      notifyListeners();
+    } else {
+      _errorMessage = res['message'] ?? 'OTP verification failed';
+      notifyListeners();
+    }
+    return res;
+  }
+
   Future<void> toggleMode() async {
     await switchMode();
   }

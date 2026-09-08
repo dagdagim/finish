@@ -47,6 +47,8 @@ class ApiConstants {
   // Endpoints
   static const String signup = '/auth/signup';
   static const String login = '/auth/login';
+  static const String googleSendOtp = '/auth/google/send-otp';
+  static const String googleVerifyOtp = '/auth/google/verify-otp';
   static const String getMe = '/users/me';
   static const String switchMode = '/users/mode';
   static const String verification = '/users/verification';

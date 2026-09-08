@@ -9,7 +9,12 @@
     "start": "node dist/server.js",
     "seed": "ts-node-dev src/seed.ts"
   },
-  "keywords": ["marketplace", "micro-tasks", "finish", "addis-ababa"],
+  "keywords": [
+    "marketplace",
+    "micro-tasks",
+    "finish",
+    "addis-ababa"
+  ],
   "author": "FINISH Engineering",
   "license": "ISC",
   "dependencies": {
@@ -19,6 +24,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
+    "nodemailer": "^10.0.1",
     "socket.io": "^4.7.5",
     "uuid": "^10.0.0"
   },
@@ -28,6 +34,7 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.12",
+    "@types/nodemailer": "^8.0.1",
     "@types/uuid": "^10.0.0",
     "rimraf": "^5.0.7",
     "ts-node-dev": "^2.0.0",

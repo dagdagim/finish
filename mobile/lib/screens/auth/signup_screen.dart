@@ -7,6 +7,7 @@ import '../../core/widgets/finish_text_field.dart';
 import '../../providers/auth_provider.dart';
 import 'role_intent_screen.dart';
 import 'login_screen.dart';
+import 'google_otp_dialog.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -662,14 +663,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         text: 'Google',
                         variant: FinishButtonVariant.outline,
                         icon: const Icon(Icons.g_mobiledata_rounded, size: 24, color: AppColors.textDark),
-                        onPressed: () async {
-                          final auth = context.read<AuthProvider>();
-                          final success = await auth.login('sarah@finish.et', 'Finish2026!');
-                          if (success && mounted) {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => const RoleIntentScreen()),
-                            );
-                          }
+                        onPressed: () {
+                          final typed = _emailController.text.trim();
+                          GoogleOtpDialog.show(
+                            context,
+                            initialEmail: typed.contains('@') ? typed : null,
+                            role: _selectedRole,
+                          );
                         },
                       ),
                     ),

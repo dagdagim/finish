@@ -195,6 +195,79 @@ class ApiService {
     }
   }
 
+  // Auth: Send Google 6-digit OTP to Gmail
+  Future<Map<String, dynamic>> sendGoogleOtp(String email, {String purpose = 'Google Sign-In / Register'}) async {
+    try {
+      final response = await _postWithFallback(
+        ApiConstants.googleSendOtp,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email.trim().toLowerCase(),
+          'purpose': purpose,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+      return {
+        'success': data['success'] == true,
+        'message': data['message'] ?? (data['success'] == true ? 'Verification code sent' : 'Failed to send verification code'),
+        'email': data['email'] ?? email,
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Cannot connect to server to send verification code. Please check your internet connection.',
+      };
+    }
+  }
+
+  // Auth: Verify Google 6-digit OTP
+  Future<Map<String, dynamic>> verifyGoogleOtp({
+    required String email,
+    required String otp,
+    String? role,
+    String? firstName,
+    String? lastName,
+  }) async {
+    try {
+      final response = await _postWithFallback(
+        ApiConstants.googleVerifyOtp,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email.trim().toLowerCase(),
+          'otp': otp.trim(),
+          if (role != null) 'role': role,
+          if (firstName != null) 'firstName': firstName,
+          if (lastName != null) 'lastName': lastName,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 && data['success'] == true) {
+        final token = data['token'];
+        _authToken = token;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        return {
+          'success': true,
+          'isNewUser': data['isNewUser'] == true,
+          'message': data['message'] ?? 'Verified successfully',
+          'token': token,
+          'user': UserModel.fromJson(data['user']),
+        };
+      }
+      return {
+        'success': false,
+        'message': data['message'] ?? 'Invalid verification code. Please try again.',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Verification failed. Cannot connect to backend server.',
+      };
+    }
+  }
+
   // Switch Active Mode (customer <-> tasker)
   Future<bool> switchMode(String newMode) async {
     try {

@@ -270,9 +270,12 @@ class _SimulatedMapWidgetState extends State<SimulatedMapWidget> with SingleTick
               ),
             ),
             children: [
-              // Google Maps Real-Time Tile Layer (with automatic fallbacks)
+              // Google Maps Real-Time Tile Layer (with automatic MapTiler & OSM fallbacks)
               TileLayer(
-                urlTemplate: ApiConstants.googleMapTileUrl(style: _activeMapStyle),
+                urlTemplate: _tileLoadError
+                    ? ApiConstants.mapTilerTileUrl(style: 'streets-v2')
+                    : ApiConstants.googleMapTileUrl(style: _activeMapStyle),
+                fallbackUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.finish.app.mobile',
                 maxZoom: 20,
                 errorTileCallback: (_, __, ___) {
