@@ -29,6 +29,7 @@ dist/
 **/android/app/release/
 *.keystore
 *.jks
+*.apk
 
 # iOS specific
 **/ios/.symlinks/
