@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/api_constants.dart';
@@ -32,7 +33,7 @@ class ApiService {
   }
 
   // Network Fallback Helpers
-  Future<http.Response> _postWithFallback(String endpoint, {Map<String, String>? headers, Object? body, Duration timeout = const Duration(seconds: 6)}) async {
+  Future<http.Response> _postWithFallback(String endpoint, {Map<String, String>? headers, Object? body, Duration timeout = const Duration(seconds: 15)}) async {
     try {
       final res = await http.post(
         Uri.parse('${ApiConstants.baseUrl}$endpoint'),
@@ -48,7 +49,7 @@ class ApiService {
             Uri.parse('$host$endpoint'),
             headers: headers,
             body: body,
-          ).timeout(const Duration(seconds: 3));
+          ).timeout(const Duration(seconds: 8));
           ApiConstants.setActiveBaseUrl(host);
           return res;
         } catch (_) {
@@ -205,6 +206,7 @@ class ApiService {
           'email': email.trim().toLowerCase(),
           'purpose': purpose,
         }),
+        timeout: const Duration(seconds: 20),
       );
 
       final data = jsonDecode(response.body);
@@ -214,9 +216,10 @@ class ApiService {
         'email': data['email'] ?? email,
       };
     } catch (e) {
+      debugPrint('[sendGoogleOtp] Exception: $e');
       return {
         'success': false,
-        'message': 'Cannot connect to server to send verification code. Please check your internet connection.',
+        'message': 'Cannot connect to server to send verification code ($e).',
       };
     }
   }
@@ -240,6 +243,7 @@ class ApiService {
           if (firstName != null) 'firstName': firstName,
           if (lastName != null) 'lastName': lastName,
         }),
+        timeout: const Duration(seconds: 20),
       );
 
       final data = jsonDecode(response.body);

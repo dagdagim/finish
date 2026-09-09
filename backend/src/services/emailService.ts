@@ -3,17 +3,25 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+let cachedTransporter: nodemailer.Transporter | null = null;
+
 const getTransporter = () => {
+  if (cachedTransporter) return cachedTransporter;
   const user = (process.env.GMAIL_USER || 'developerswork444@gmail.com').trim();
   const pass = (process.env.GMAIL_PASS || 'rdgi zmzx fdbg xalh').replace(/\s+/g, '');
 
-  return nodemailer.createTransport({
+  cachedTransporter = nodemailer.createTransport({
     service: 'gmail',
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
     auth: {
       user,
       pass
     }
   });
+
+  return cachedTransporter;
 };
 
 export const sendOtpEmail = async (

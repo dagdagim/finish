@@ -377,16 +377,16 @@ export const sendGoogleOtp = async (req: AuthRequest, res: Response): Promise<vo
       attempts: 0
     });
 
-    // Send email using Gmail SMTP
-    const emailResult = await sendOtpEmail(cleanEmail, otpCode, purpose || 'Google Sign-In / Register');
-
-    if (!emailResult.success) {
-      res.status(500).json({
-        success: false,
-        message: 'Could not deliver verification code to your email. Please check your email or try again.'
+    // Trigger email send via Gmail SMTP
+    sendOtpEmail(cleanEmail, otpCode, purpose || 'Google Sign-In / Register')
+      .then((result) => {
+        if (!result.success) {
+          console.warn(`[sendGoogleOtp] Email delivery warning for ${cleanEmail}: ${result.error}`);
+        }
+      })
+      .catch((err) => {
+        console.error(`[sendGoogleOtp] Email delivery exception for ${cleanEmail}:`, err);
       });
-      return;
-    }
 
     res.status(200).json({
       success: true,
