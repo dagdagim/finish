@@ -1,17 +1,20 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 class ApiConstants {
   static String _activeBaseUrl = '';
 
+  static const String liveRenderBaseUrl = 'https://finish-backend-lyr3.onrender.com/api/v1';
+
   static List<String> get candidateHosts {
     if (kIsWeb) {
       return const [
+        'https://finish-backend-lyr3.onrender.com/api/v1',
         'http://127.0.0.1:5000/api/v1',
         'http://localhost:5000/api/v1',
       ];
     }
     return const [
+      'https://finish-backend-lyr3.onrender.com/api/v1',
       'http://127.0.0.1:5000/api/v1',       // Works with adb reverse & local
       'http://10.180.63.219:5000/api/v1',    // Local Wi-Fi network IP
       'http://10.0.2.2:5000/api/v1',        // Android Emulator
@@ -20,24 +23,10 @@ class ApiConstants {
   }
 
   static String get baseUrl {
-    if (kIsWeb) {
-      if (_activeBaseUrl.isNotEmpty && !_activeBaseUrl.contains('10.0.2.2')) {
-        return _activeBaseUrl;
-      }
-      return 'http://127.0.0.1:5000/api/v1';
-    }
-
     if (_activeBaseUrl.isNotEmpty) {
       return _activeBaseUrl;
     }
-
-    try {
-      if (Platform.isAndroid) {
-        // Default to 127.0.0.1 which works with adb reverse on physical phones
-        return 'http://127.0.0.1:5000/api/v1';
-      }
-    } catch (_) {}
-    return 'http://127.0.0.1:5000/api/v1';
+    return liveRenderBaseUrl;
   }
 
   static void setActiveBaseUrl(String url) {
