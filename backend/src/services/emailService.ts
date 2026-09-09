@@ -1,9 +1,9 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { Transporter } from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-let cachedTransporter: nodemailer.Transporter | null = null;
+let cachedTransporter: Transporter | null = null;
 
 const getTransporter = () => {
   if (cachedTransporter) return cachedTransporter;
