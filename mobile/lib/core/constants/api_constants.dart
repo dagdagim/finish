@@ -3,18 +3,18 @@ import 'package:flutter/foundation.dart';
 class ApiConstants {
   static String _activeBaseUrl = '';
 
-  static const String liveRenderBaseUrl = 'https://finish-backend-lyr3.onrender.com/api/v1';
+  static const String liveRenderBaseUrl = 'https://finish-xmvb.onrender.com/api/v1';
 
   static List<String> get candidateHosts {
     if (kIsWeb) {
       return const [
-        'https://finish-backend-lyr3.onrender.com/api/v1',
+        'https://finish-xmvb.onrender.com/api/v1',
         'http://127.0.0.1:5000/api/v1',
         'http://localhost:5000/api/v1',
       ];
     }
     return const [
-      'https://finish-backend-lyr3.onrender.com/api/v1',
+      'https://finish-xmvb.onrender.com/api/v1',
       'http://127.0.0.1:5000/api/v1',       // Works with adb reverse & local
       'http://10.180.63.219:5000/api/v1',    // Local Wi-Fi network IP
       'http://10.0.2.2:5000/api/v1',        // Android Emulator
