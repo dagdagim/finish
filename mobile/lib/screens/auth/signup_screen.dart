@@ -680,14 +680,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         text: 'Apple',
                         variant: FinishButtonVariant.outline,
                         icon: const Icon(Icons.apple_rounded, size: 20, color: AppColors.textDark),
-                        onPressed: () async {
-                          final auth = context.read<AuthProvider>();
-                          final success = await auth.login('sarah@finish.et', 'Finish2026!');
-                          if (success && mounted) {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => const RoleIntentScreen()),
-                            );
-                          }
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('Apple Sign-In is only available on iOS devices.'),
+                              backgroundColor: AppColors.textDark,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                          );
                         },
                       ),
                     ),

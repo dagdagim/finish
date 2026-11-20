@@ -135,14 +135,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> setDemoCustomer() async {
-    return await login('sarah@finish.et', 'Finish2026!');
-  }
-
-  Future<bool> setDemoTasker() async {
-    return await login('daniel@finish.et', 'Finish2026!');
-  }
-
   Future<void> fetchMe() async {
     final user = await _api.getMe();
     if (user != null) {
