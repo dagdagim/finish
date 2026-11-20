@@ -30,6 +30,8 @@ dist/
 *.keystore
 *.jks
 *.apk
+!FINISH-release.apk
+!release.apk
 
 # iOS specific
 **/ios/.symlinks/

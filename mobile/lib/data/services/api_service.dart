@@ -33,7 +33,7 @@ class ApiService {
   }
 
   // Network Fallback Helpers
-  Future<http.Response> _postWithFallback(String endpoint, {Map<String, String>? headers, Object? body, Duration timeout = const Duration(seconds: 15)}) async {
+  Future<http.Response> _postWithFallback(String endpoint, {Map<String, String>? headers, Object? body, Duration timeout = const Duration(seconds: 4)}) async {
     try {
       final res = await http.post(
         Uri.parse('${ApiConstants.baseUrl}$endpoint'),
@@ -49,7 +49,7 @@ class ApiService {
             Uri.parse('$host$endpoint'),
             headers: headers,
             body: body,
-          ).timeout(const Duration(seconds: 8));
+          ).timeout(const Duration(seconds: 3));
           ApiConstants.setActiveBaseUrl(host);
           return res;
         } catch (_) {
@@ -60,7 +60,7 @@ class ApiService {
     }
   }
 
-  Future<http.Response> _getWithFallback(String endpoint, {Map<String, String>? headers, Duration timeout = const Duration(seconds: 6)}) async {
+  Future<http.Response> _getWithFallback(String endpoint, {Map<String, String>? headers, Duration timeout = const Duration(seconds: 4)}) async {
     try {
       final res = await http.get(
         Uri.parse('${ApiConstants.baseUrl}$endpoint'),
@@ -85,7 +85,7 @@ class ApiService {
     }
   }
 
-  Future<http.Response> _patchWithFallback(String endpoint, {Map<String, String>? headers, Object? body, Duration timeout = const Duration(seconds: 6)}) async {
+  Future<http.Response> _patchWithFallback(String endpoint, {Map<String, String>? headers, Object? body, Duration timeout = const Duration(seconds: 4)}) async {
     try {
       final res = await http.patch(
         Uri.parse('${ApiConstants.baseUrl}$endpoint'),
@@ -142,11 +142,123 @@ class ApiService {
         'message': data['message'] ?? 'Login failed. Please check your credentials.',
       };
     } catch (e) {
+      // Offline Demo Fallback: If backend is not running or unreachable, allow demo accounts seamlessly
+      final offlineUser = _getOfflineDemoUser(emailOrPhone.trim(), password);
+      if (offlineUser != null) {
+        final token = 'offline_demo_token_${offlineUser.id}';
+        _authToken = token;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        return {
+          'success': true,
+          'token': token,
+          'user': offlineUser,
+        };
+      }
+
       return {
         'success': false,
         'message': 'Cannot connect to backend server. Please make sure the server is running.',
       };
     }
+  }
+
+  UserModel? _getOfflineDemoUser(String identifier, String password) {
+    final clean = identifier.trim().toLowerCase();
+    final isValidPass = (password == 'Finish2026!' || password == 'Admin2026!');
+    if (!isValidPass) return null;
+
+    if (clean == 'sarah@finish.et' || clean == '+251911223344') {
+      return UserModel(
+        id: 'user_sarah_seed',
+        firstName: 'Sarah',
+        lastName: 'Mamo',
+        email: 'sarah@finish.et',
+        phone: '+251911223344',
+        role: 'both',
+        activeMode: 'customer',
+        rating: 4.9,
+        reviewCount: 12,
+        completedTasksCount: 8,
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+        isIdentityVerified: true,
+        verificationStatus: 'APPROVED',
+      );
+    }
+
+    if (clean == 'daniel@finish.et' || clean == '+251912345678') {
+      return UserModel(
+        id: 'user_daniel_seed',
+        firstName: 'Daniel',
+        lastName: 'Kebede',
+        email: 'daniel@finish.et',
+        phone: '+251912345678',
+        role: 'both',
+        activeMode: 'tasker',
+        rating: 4.9,
+        reviewCount: 94,
+        completedTasksCount: 128,
+        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+        isIdentityVerified: true,
+        verificationStatus: 'APPROVED',
+      );
+    }
+
+    if (clean == 'admin@finish.et' || clean == '+251911000000' || clean == 'admin') {
+      return UserModel(
+        id: 'user_admin_1',
+        firstName: 'Admin',
+        lastName: 'Operations',
+        email: 'admin@finish.et',
+        phone: '+251911000000',
+        role: 'admin',
+        activeMode: 'customer',
+        rating: 5.0,
+        reviewCount: 50,
+        completedTasksCount: 100,
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+        isIdentityVerified: true,
+        verificationStatus: 'APPROVED',
+      );
+    }
+
+    if (clean == 'michael@finish.et' || clean == '+251922334455') {
+      return UserModel(
+        id: 'user_michael_seed',
+        firstName: 'Michael',
+        lastName: 'Alemu',
+        email: 'michael@finish.et',
+        phone: '+251922334455',
+        role: 'tasker',
+        activeMode: 'tasker',
+        rating: 4.7,
+        reviewCount: 52,
+        completedTasksCount: 85,
+        avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
+        isIdentityVerified: true,
+        verificationStatus: 'APPROVED',
+      );
+    }
+
+    if (clean == 'abel@finish.et' || clean == '+251933445566') {
+      return UserModel(
+        id: 'user_abel_seed',
+        firstName: 'Abel',
+        lastName: 'Tadesse',
+        email: 'abel@finish.et',
+        phone: '+251933445566',
+        role: 'tasker',
+        activeMode: 'tasker',
+        rating: 5.0,
+        reviewCount: 31,
+        completedTasksCount: 42,
+        avatarUrl: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&auto=format&fit=crop&q=80',
+        isIdentityVerified: true,
+        verificationStatus: 'APPROVED',
+      );
+    }
+
+    return null;
   }
 
   // Auth: Signup

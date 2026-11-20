@@ -8,23 +8,27 @@ class ApiConstants {
   static List<String> get candidateHosts {
     if (kIsWeb) {
       return const [
-        'https://finish-xmvb.onrender.com/api/v1',
         'http://127.0.0.1:5000/api/v1',
         'http://localhost:5000/api/v1',
+        'https://finish-xmvb.onrender.com/api/v1',
       ];
     }
     return const [
-      'https://finish-xmvb.onrender.com/api/v1',
-      'http://127.0.0.1:5000/api/v1',       // Works with adb reverse & local
-      'http://10.180.63.219:5000/api/v1',    // Local Wi-Fi network IP
+      'http://192.168.1.3:5000/api/v1',      // Local PC Wi-Fi IP (current network)
+      'http://127.0.0.1:5000/api/v1',       // Works with adb reverse & local USB
+      'https://finish-xmvb.onrender.com/api/v1', // Cloud Render server
       'http://10.0.2.2:5000/api/v1',        // Android Emulator
       'http://localhost:5000/api/v1',
+      'http://10.180.63.219:5000/api/v1',   // Alternate Wi-Fi IP
     ];
   }
 
   static String get baseUrl {
     if (_activeBaseUrl.isNotEmpty) {
       return _activeBaseUrl;
+    }
+    if (kDebugMode) {
+      return 'http://192.168.1.3:5000/api/v1';
     }
     return liveRenderBaseUrl;
   }
